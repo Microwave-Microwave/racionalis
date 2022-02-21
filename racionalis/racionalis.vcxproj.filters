@@ -42,6 +42,9 @@
     <ClCompile Include="BigInt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="OwnFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="racionalis.h">
@@ -69,6 +72,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BigInt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="OwnFunction.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

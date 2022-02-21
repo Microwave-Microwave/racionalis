@@ -142,6 +142,7 @@
     <ClCompile Include="BigInt.cpp" />
     <ClCompile Include="binary_number.cpp" />
     <ClCompile Include="bit.cpp" />
+    <ClCompile Include="OwnFunction.cpp" />
     <ClCompile Include="idopont.cpp" />
     <ClCompile Include="idotartam.cpp" />
     <ClCompile Include="MyVector.cpp" />
@@ -153,6 +154,7 @@
     <ClInclude Include="BigInt.h" />
     <ClInclude Include="binary_number.h" />
     <ClInclude Include="bit.h" />
+    <ClInclude Include="OwnFunction.h" />
     <ClInclude Include="idopont.h" />
     <ClInclude Include="idotartam.h" />
     <ClInclude Include="MyVector.h" />

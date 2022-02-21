@@ -27,11 +27,15 @@ class BigInt
 		BigInt operator*(int digit); //kicsi szorzas
 		BigInt operator/(BigInt i);
 		BigInt operator%(BigInt i);
+		BigInt Plusz10Szazalek();
 		friend BigInt sqrt(BigInt num);
+		friend BigInt sqrtOld(BigInt num);
 		bool IsPrime();
 		bool IsPrimeNew();
 		bool IsPrimeOld();
 		string StringStretcher(string s1, string s2);
+		string StringStretcher2(string s1, string s2);
+		string StringStretcher3(string s1, string s2);
 		string ReverseString(string s);
 		bool operator<=(BigInt i);
 		bool operator==(BigInt i);

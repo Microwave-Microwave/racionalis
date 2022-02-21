@@ -3,13 +3,16 @@
 #include "teglalap.h"
 #include "vektor.h"
 #include "idopont.h"
+#include "OwnFunction.h"
 #include "binary_number.h"
 #include "BigInt.h"
+#include <sstream>
 #include <stdlib.h>
 #include <fstream>
 #include <list>
 #include <string>
 #include <chrono> 
+#include <cstdlib>
 
 using namespace std;
 
@@ -154,6 +157,10 @@ int main()
 
     BigInt test = BigInt("3");
     cout << endl;
+
+    BigInt aa = BigInt("10");
+    //cout << "aa = + 1 = 11: " << (aa + 1) << endl;
+
     test.TestCases();
 
     BigInt sqrt_test = BigInt("100");
@@ -172,9 +179,30 @@ int main()
     */
 
     
-    cout << endl << "PRIME TO FILE." << endl;
-    double profiling2 = ProfilerSilent(PrimeSearcherTestNew, 1000);
-    cout << "runtime: " << profiling2 << " secs" << endl;
+    cout << endl << "Calibration" << endl;
+    
+
+    double computation_size = 6000;
+    //double calibration_size = computation_size/1;
+
+    
+    //OwnFunction f = CalibratePrimeTimer(calibration_size);
+    OwnFunction f = CalibrateFromFile("test");
+
+    cout << endl << "This is going to take: " << f.GetValue(computation_size) << "seconds" << endl;
+
+
+    
+    cout << "prime test super new. (" << NumberComma(computation_size) << " numbers)" << endl;
+    double profiling0 = Profiler(PrimeSearcherTestNew, computation_size);
+    
+    
+
+
+    //double profiling2 = ProfilerSilent(PrimeSearcherTestNew, 100);
+    //cout << "runtime: " << profiling2 << " secs" << endl;
+
+    
 
     //PrimeSpeed(100);
     
@@ -707,13 +735,12 @@ void PrimeSpeed(int n)
 
 void PrimeSearcherTestNew(int n2)
 {
-    BigInt test = BigInt("0");
     for (int i = 3; i < n2; i += 2)
     {
-        test = BigInt(std::to_string(i));
+        BigInt test(std::to_string(i));
         if (test.IsPrimeNew())
         {
-            //cout << test << endl;
+            //cout << i << endl;
         }
     }
 }
@@ -757,11 +784,11 @@ void PrimeSearcherTestOldBad(int n2)
     }
 }
 
-void PrimeTimeToFile(int n2)
+void PrimeTimeToFile(int n2, string name)
 {
     ofstream myfile;
-    int number = 1000000;
-    myfile.open("C:/Users/Felvea/Documents/Prime/example3.txt");
+    int number = 100;
+    myfile.open("C:/Users/Felvea/Documents/Prime/" + name + ".txt");
     myfile << "Prime Numbers To " << (n2 * number) << endl;
 
     BigInt test = BigInt("4");
@@ -774,7 +801,7 @@ void PrimeTimeToFile(int n2)
     cout << ">" << endl;
     
     cout << "<";
-    for (int j = 0; j <= n2; j++)
+    for (int j = 0; j <= n2 - 1; j++)
     {
         cout << "=";
         myfile << j*number << "\t";
@@ -782,8 +809,8 @@ void PrimeTimeToFile(int n2)
         for (int i = (j-1)*100; i < j * 100; i++)
         {
            
-            //test = BigInt(std::to_string(i));
-            if (IsPrimeInt(i))
+            test = BigInt(std::to_string(i));
+            if (test.IsPrimeNew())
             {
             }
            
@@ -791,6 +818,49 @@ void PrimeTimeToFile(int n2)
         auto end = std::chrono::system_clock::now();
         std::chrono::duration<double> elapsed_seconds = end - start;
         myfile << elapsed_seconds.count() << endl;
+    }
+    cout << ">" << endl;
+
+    myfile.close();
+}
+
+void PrimeTimeToFileAddative(int n2, string name)
+{
+    ofstream myfile;
+    int number = 100;
+    myfile.open("C:/Users/Felvea/Documents/Prime/" + name + ".txt");
+    myfile << "Prime Numbers To " << (n2 * number) << endl;
+
+    BigInt test = BigInt("4");
+
+    cout << "<";
+    for (int i = 0; i < n2; i++)
+    {
+        cout << "-";
+    }
+    cout << ">" << endl;
+
+    cout << "<";
+    
+    double commulative_seconds = 0;
+    for (int j = 0; j <= n2; j++)
+    {
+        cout << "=";
+        myfile << j * number << "\t";
+        auto start = std::chrono::system_clock::now();
+        for (int i = (j) * 100; i < (j + 1) * 100; i++)
+        {
+
+            test = BigInt(std::to_string(i));
+            if (test.IsPrimeNew())
+            {
+            }
+
+        }
+        auto end = std::chrono::system_clock::now();
+        std::chrono::duration<double> elapsed_seconds = end - start;
+        commulative_seconds += elapsed_seconds.count();
+        myfile << commulative_seconds << endl;
     }
     cout << ">" << endl;
 
@@ -807,6 +877,113 @@ bool IsPrimeInt(int n)
         }
     }
     return true;
+}
+
+OwnFunction CalibratePrimeTimer(int size)
+{
+
+    cout << endl << "Calibrating using prime test super new. (" << NumberComma(size) << " numbers)" << endl;
+    
+    auto start = std::chrono::system_clock::now();
+    PrimeTimeToFileAddative(size/100, "test");
+    auto end = std::chrono::system_clock::now();
+    std::chrono::duration<double> elapsed_seconds = end - start;
+    cout << "This took: " << elapsed_seconds.count() << " seconds" << endl;
+
+
+    vector<double> x_values;
+    vector<double> y_values;
+
+    string filename = "C:/Users/Felvea/Documents/Prime/test.txt";
+    
+    ifstream file(filename);
+    string line;
+    vector<string> lines;
+
+    bool first_line = true;
+    while (getline(file, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        int counter = 0;
+        while (getline(iss, token, '\t'))   // but we can specify a different one
+        {
+            if (first_line)
+            {
+                first_line = false;
+            }
+            else
+            {
+                if (counter == 0)
+                {
+                    x_values.push_back(stold(token));
+                    counter++;
+                }
+                else
+                {
+                    y_values.push_back(stold(token));
+                }
+                //cout << token << endl;
+            }
+        }
+        
+    }
+    OwnFunction f = OwnFunction(x_values, y_values);
+    f.ThreePointFunction();
+    return f;
+    //f.GetFunctionVertex();
+    //cout << "Function value at: " << f.GetValue(100) << endl;
+}
+
+OwnFunction CalibrateFromFile(string name)
+{
+
+    cout << endl << "Calibrating using file: " << name << ".txt" << endl;
+
+    vector<double> x_values;
+    vector<double> y_values;
+
+    string filename = "C:/Users/Felvea/Documents/Prime/" + name + ".txt";
+
+    ifstream file(filename);
+    string line;
+    vector<string> lines;
+
+    bool first_line = true;
+    while (getline(file, line))
+    {
+        istringstream iss(line);
+        string token;
+
+        int counter = 0;
+        while (getline(iss, token, '\t'))   // but we can specify a different one
+        {
+            if (first_line)
+            {
+                first_line = false;
+            }
+            else
+            {
+                if (counter == 0)
+                {
+                    x_values.push_back(stold(token));
+                    counter++;
+                }
+                else
+                {
+                    y_values.push_back(stold(token));
+                }
+                //cout << token << endl;
+            }
+        }
+
+    }
+    OwnFunction f = OwnFunction(x_values, y_values);
+    f.ThreePointFunction();
+    return f;
+    //f.GetFunctionVertex();
+    //cout << "Function value at: " << f.GetValue(100) << endl;
 }
 
 //HF

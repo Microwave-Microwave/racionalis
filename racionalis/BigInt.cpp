@@ -77,7 +77,7 @@ void BigInt::Duplazas()
 
 BigInt BigInt::operator+(BigInt i)
 {
-	
+	//cout << "i.get: " << i.GetString() << endl;
 	int maradek = 0;
 	string ertek1 = StringStretcher(i.GetString(), ertek);
 	//cout << "stretcher1: " << ertek1 << endl;
@@ -122,7 +122,8 @@ BigInt BigInt::operator+(BigInt i)
 }
 BigInt BigInt::operator+(int i)
 {
-	return (BigInt(ertek) + BigInt(i + ""));
+	//cout << std::to_string(1) << " " << BigInt(std::to_string(1)) << endl;
+	return (BigInt(ertek) + BigInt(std::to_string(i)));
 }
 
 BigInt BigInt::operator-(BigInt i)
@@ -292,7 +293,65 @@ BigInt BigInt::operator%(BigInt i)
 	return BigInt(resz_osztando);
 }
 
+BigInt BigInt::Plusz10Szazalek()
+{
+	string s = this->GetString();
+	if (2 <= s.length())
+	{
+		return BigInt(s.substr(0, s.length() - 1)) + *this;
+	}
+	else
+	{
+		return *this;
+	}
+}
+
 BigInt sqrt(BigInt num)
+{
+	//BigInt valasz = num;
+
+	//9
+	//min 1 max 9
+	//proba 1 + 9 ) / 2 = 5
+	//1 min max 4
+	// proba 3
+
+	if (num <= 1000000000)
+	{
+		return (int)ceil(sqrt(atoi(num.GetString().c_str())));
+	}
+	else
+	{
+		BigInt min = BigInt("1");
+		BigInt max = num;
+		BigInt proba = (min + max) / 2;
+
+		BigInt numplusz10szazalek = num.Plusz10Szazalek();
+
+		BigInt product = proba * proba;
+		while (!(num <= product + 1 && product <= numplusz10szazalek) && min <= max)
+		{
+			//cout << "min, max, proba, num, num10: " << min << " " << max << " " << proba << " " << num << " " << numplusz10szazalek << endl;
+			if (product <= num)
+			{
+				min = proba + 1;
+			}
+			else
+			{
+				max = proba - 1;
+			}
+			proba = (min + max) / 2;
+			product = proba * proba;
+		}
+		if (max <= min + 1)
+		{
+			return min;
+		}
+		return proba;
+	}
+}
+
+BigInt sqrtOld(BigInt num)
 {
 	BigInt valasz = num;
 	BigInt valasz_kicsi = BigInt("0");
@@ -326,8 +385,10 @@ bool BigInt::IsPrimeNew()
 	{
 		return false;
 	}
-	for (BigInt i = BigInt("3"); i <= sqrt(*this); i = BigInt("2") + i)
+	BigInt sqrtNum = sqrt(*this);
+	for (BigInt i = BigInt("3"); i <= sqrtNum; i = BigInt("2") + i)
 	{
+		//cout << "i: " << i << " this/i: " << *this / i << " *this: " << *this << endl;
 		if (i * (*this / i) == *this)
 		{
 			return false;
@@ -360,12 +421,10 @@ bool BigInt::IsPrimeOld()
 	return true;
 }
 
-string BigInt::StringStretcher(string s1, string s2)
+string BigInt::StringStretcher2(string s1, string s2)
 {
-	int s1_len = s1.length();
-	int s2_len = s2.length();
-	//cout << "s1len " << s1_len << endl;
-	//cout << "s2len " << s2_len << endl;
+	const int s1_len = s1.length();
+	const int s2_len = s2.length();
 
 	if (s1_len < s2_len)
 	{
@@ -376,7 +435,42 @@ string BigInt::StringStretcher(string s1, string s2)
 		}
 		s1 = a + s1;
 	}
-	//cout << "nice" << endl;
+	return s1;
+}
+
+string BigInt::StringStretcher(string s1, string s2)
+{
+	const int s1_len = s1.length();
+	const int s2_len = s2.length();
+
+	if (s1_len < s2_len)
+	{
+		s1.insert(0, s2_len - s1_len, '0');
+	}
+	return s1;
+}
+
+string BigInt::StringStretcher3(string s1, string s2)
+{
+	const int s1_len = s1.length();
+	const int s2_len = s2.length();
+	//cout << "s1 len " << s1_len << " s1: " << s1 << endl;
+	//cout << "s2 len " << s2_len << " s2: " << s2 << endl;
+
+	if (s1_len < s2_len)
+	{
+		//cout << ":(((" << endl;
+		//cout << ":)))" << endl;
+
+		string a = "";
+		for (int i = 0; i < s2_len - s1_len; i++)
+		{
+			a += "0";
+		}
+		s1 = a + s1;
+
+	}
+	//cout << "nice: " << s1 << endl;
 	return s1;
 }
 
@@ -405,6 +499,7 @@ bool BigInt::operator<=(BigInt i)
 	}
 	else //egyenlo hosszuak
 	{
+		//cout << "ertek1: [" << ertek1 << "] ertek2: [" << ertek2 << "]" << (ertek1<=ertek2) << endl;
 		return ertek1 <= ertek2;
 		/*
 		for (int i = 0; i < ertek1.length(); i++)
@@ -451,7 +546,7 @@ int BigInt::SimpleDivision(BigInt i)
 	int oszto = atoi(i.GetString().c_str());
 	int osztando = atoi(this->GetString().c_str());
 
-	
+	/*
 	for (int j = 1; j < 10; j++)
 	{
 		//cout << *this << " <= " << i << " * " << j << endl;
@@ -465,7 +560,8 @@ int BigInt::SimpleDivision(BigInt i)
 		}
 		eredmeny = j;
 	}
-	
+	*/
+	eredmeny = osztando / oszto;
 	return eredmeny;
 }
 
@@ -587,9 +683,9 @@ void BigInt::TestCases()
 	{
 		int a_ = i;
 		a = BigInt(std::to_string(a_));
-		string string_1 = to_string((int)(round(sqrt(a_))));
-		string string_2 = sqrt((a)).GetString();
-		if (string_1 != string_2)
+		BigInt string_1 = BigInt(to_string((int)(round(sqrt(a_)))));
+		BigInt string_2 = sqrt((a));
+		if (!(string_1 <= string_2))
 		{
 			cout << "SQRT Failed because:" << endl;
 			cout << "int: " << a_ << " sqrt = [" << string_1 << "]" << endl;

@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "OwnFunction.h"
 
 using namespace std;
 
@@ -40,6 +41,10 @@ private:
     void clean();
 };
 
+//Public variables
+
+
+//else
 racionalis operator/(racionalis bal, racionalis jobb);
 racionalis operator*(int bal, racionalis jobb);
 ostream& operator<<(ostream& os, racionalis jobb);
@@ -62,5 +67,12 @@ void PrimeSearcherTest(int n2);
 void PrimeSearcherTestOld(int n2);
 void PrimeSearcherTestOldBad(int n2);
 
-void PrimeTimeToFile(int n2);
+void PrimeTimeToFile(int n2, string name);
+void PrimeTimeToFileAddative(int n2, string name);
 bool IsPrimeInt(int n2);
+
+//CoolFuntions
+OwnFunction CalibratePrimeTimer(int size);
+OwnFunction CalibrateFromFile(string name);
+
+double HowMuchTimeToPrime(double n);
